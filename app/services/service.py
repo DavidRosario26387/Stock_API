@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from app.repositories.metrics_repo import fetch_metrics
+from app.repositories.repo import fetch_metrics,fetch_company
 
 def get_metrics(ticker: str, year: int | None = None):
     rows = fetch_metrics(ticker, year)
@@ -14,3 +14,11 @@ def get_metrics(ticker: str, year: int | None = None):
     # - investor rules
 
     return rows
+
+def get_company(q,limit):
+    q=q.strip()
+    if len(q)<2:
+        return []
+    return fetch_company(q,limit)
+
+

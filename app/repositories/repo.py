@@ -1,32 +1,6 @@
 from psycopg2.extras import RealDictCursor
 from app.db import get_connection, release_connection
 
-def fetch_metrics(ticker: str, year: int | None = None):
-    conn = get_connection()
-    cur = conn.cursor(cursor_factory=RealDictCursor)
-
-    try:
-        if year:
-            cur.execute("""
-                SELECT *
-                FROM us_derived_metrics_annual
-                WHERE ticker = %s AND fiscal_year = %s
-                ORDER BY fiscal_year DESC
-            """, (ticker, year))
-        else:
-            cur.execute("""
-                SELECT *
-                FROM us_derived_metrics_annual
-                WHERE ticker = %s
-                ORDER BY fiscal_year DESC
-            """, (ticker,))
-
-        return cur.fetchall()
-
-    finally:
-        cur.close()
-        release_connection(conn)
-
 def fetch_company(q,limit):
     conn = get_connection()
     cur = conn.cursor(cursor_factory=RealDictCursor)
@@ -61,6 +35,106 @@ def fetch_company(q,limit):
 
     try:
         cur.execute(sql, params)
+        return cur.fetchall()
+
+    finally:
+        cur.close()
+        release_connection(conn)
+
+def fetch_metrics(ticker: str, year: int | None = None):
+    conn = get_connection()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    try:
+        if year is not None:
+            cur.execute("""
+                SELECT *
+                FROM us_derived_metrics_annual
+                WHERE ticker = %s AND fiscal_year = %s
+            """, (ticker, year))
+        else:
+            cur.execute("""
+                SELECT *
+                FROM us_derived_metrics_annual
+                WHERE ticker = %s
+                ORDER BY fiscal_year DESC
+            """, (ticker,))
+
+        return cur.fetchall()
+
+    finally:
+        cur.close()
+        release_connection(conn)
+
+def fetch_income(ticker: str, year: int | None = None):
+    conn = get_connection()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    try:
+        if year is not None:
+            cur.execute("""
+                SELECT *
+                FROM income_annual
+                WHERE ticker = %s AND fiscal_year = %s
+            """, (ticker, year))
+        else:
+            cur.execute("""
+                SELECT *
+                FROM income_annual
+                WHERE ticker = %s
+                ORDER BY fiscal_year DESC
+            """, (ticker,))
+
+        return cur.fetchall()
+
+    finally:
+        cur.close()
+        release_connection(conn)
+
+def fetch_balance(ticker: str, year: int | None = None):
+    conn = get_connection()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    try:
+        if year is not None:
+            cur.execute("""
+                SELECT *
+                FROM us_balance_annual
+                WHERE ticker = %s AND fiscal_year = %s
+            """, (ticker, year))
+        else:
+            cur.execute("""
+                SELECT *
+                FROM us_balance_annual
+                WHERE ticker = %s
+                ORDER BY fiscal_year DESC
+            """, (ticker,))
+
+        return cur.fetchall()
+
+    finally:
+        cur.close()
+        release_connection(conn)
+
+def fetch_bulk(ticker: str, year: int | None = None):
+    conn = get_connection()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    try:
+        if year is not None:
+            cur.execute("""
+                SELECT *
+                FROM us_financials_annual
+                WHERE ticker = %s AND fiscal_year = %s
+            """, (ticker, year))
+        else:
+            cur.execute("""
+                SELECT *
+                FROM us_financials_annual
+                WHERE ticker = %s
+                ORDER BY fiscal_year DESC
+            """, (ticker,))
+
         return cur.fetchall()
 
     finally:
